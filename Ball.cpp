@@ -133,14 +133,15 @@ bool Ball::collision() {
 	// КОНЕЦ обработки столкновений с платформой
 	//Столкновение с блоками
 	int i = 0; //счетчик столкновений
-	if ((CurrentLevel.Map[this->position.Y - 1][this->position.X] !=
-         CurrentLevel.back) &&
-         (this->course.Y < 0)) {
-		CurrentGame.points += 100; // очки за столкновение
-		CurrentLevel.Map[this->position.Y - 1][this->position.X] = CurrentLevel.back;
-		this->course.Y = -(this->course.Y);
-		i++;
-	}
+	if (!(this->position.Y - 1 < 0)) // проверка верхнего положения, чтобы не уйти за границу массива (-1).
+		if ((CurrentLevel.Map[this->position.Y - 1][this->position.X] !=
+			 CurrentLevel.back) &&
+			 (this->course.Y < 0)) {
+			CurrentGame.points += 100; // очки за столкновение
+			CurrentLevel.Map[this->position.Y - 1][this->position.X] = CurrentLevel.back;
+			this->course.Y = -(this->course.Y);
+			i++;
+		}
 	if ((CurrentLevel.Map[this->position.Y][this->position.X + 1] !=
          CurrentLevel.back) &&
          (this->course.X > 0)) {
@@ -174,20 +175,22 @@ bool Ball::collision() {
 			CurrentLevel.Map[this->position.Y + 1][this->position.X + 1] = CurrentLevel.back;
 			i++;
 		}
-		if (CurrentLevel.Map[this->position.Y - 1][this->position.X + 1] != CurrentLevel.back &&
-			(this->course.X > 0) && (this->course.Y < 0) // если блок правее по горизонтали и выше вертикали и шар идет вправо + вверх
-		) {
-			CurrentGame.points += 100;// очки за столкновение
-			CurrentLevel.Map[this->position.Y - 1][this->position.X + 1] = CurrentLevel.back;
-			i++;
-		}
-		if (CurrentLevel.Map[this->position.Y - 1][this->position.X - 1] != CurrentLevel.back &&
-			(this->course.X < 0) && (this->course.Y < 0) // если блок левее по горизонтали и ниже вертикали и шар идет влево + вниз
-		) {
-			CurrentGame.points += 100;// очки за столкновение
-			CurrentLevel.Map[this->position.Y - 1][this->position.X - 1] = CurrentLevel.back;
-			i++;
-		}
+		if ((this->position.Y - 1) >= 0)
+			if (CurrentLevel.Map[this->position.Y - 1][this->position.X + 1] != CurrentLevel.back &&
+				(this->course.X > 0) && (this->course.Y < 0) // если блок правее по горизонтали и выше вертикали и шар идет вправо + вверх
+			) {
+				CurrentGame.points += 100;// очки за столкновение
+				CurrentLevel.Map[this->position.Y - 1][this->position.X + 1] = CurrentLevel.back;
+				i++;
+			}
+		if ((this->position.Y - 1) >= 0)
+			if (CurrentLevel.Map[this->position.Y - 1][this->position.X - 1] != CurrentLevel.back &&
+				(this->course.X < 0) && (this->course.Y < 0) // если блок левее по горизонтали и ниже вертикали и шар идет влево + вниз
+			) {
+				CurrentGame.points += 100;// очки за столкновение
+				CurrentLevel.Map[this->position.Y - 1][this->position.X - 1] = CurrentLevel.back;
+				i++;
+			}
 		if (CurrentLevel.Map[this->position.Y + 1][this->position.X - 1] != CurrentLevel.back &&
 			(this->course.X < 0) && (this->course.Y > 0) // если блок левее по горизонтали и выше вертикали и шар идет влево + вверх
 		) {

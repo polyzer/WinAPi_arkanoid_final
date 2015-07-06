@@ -78,32 +78,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 			EndPaint(hWnd, &ps);
 		break;
 		case WM_KEYDOWN:
-			if(VK_UP & wParam){
+			switch(wParam){
+			case VK_UP:
 				if(CurrentPlatform.moveControl(1))
 				{
 					CurrentPlatform.step(1);
-				}
-			}
-			if(VK_RIGHT & wParam){
+				}			
+			break;
+			case VK_RIGHT:
 				if(CurrentPlatform.moveControl(2))
 				{
 					CurrentPlatform.step(2);
 				}
-			}
-			if(VK_DOWN & wParam){
+			
+			break;
+			case VK_DOWN:
 				if(CurrentPlatform.moveControl(3))
 				{
 					CurrentPlatform.step(3);
 				}
-			}
-			if(VK_LEFT & wParam){
+			
+			break;
+			case VK_LEFT:
 				if(CurrentPlatform.moveControl(4))
 				{
 					CurrentPlatform.step(4);
-				}
-			}
-			if(VK_SPACE & wParam){
+				}			
+			break;
+			case VK_SPACE:
 				CurrentGame.End();
+			break;
 			}
 		break;
 		case WM_DESTROY : PostQuitMessage(0);
