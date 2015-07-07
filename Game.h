@@ -27,6 +27,8 @@ public:
 		points = 0;
 		speed = minSpeed; //стартовая скорость
 		saveStatus = 0; //0 - new, 1 - load
+		this->CurrentLevelNumber = 0;
+		this->CurrentLevelName = L"Default";
 	}
 	
 	bool loadLevelsFromFile();

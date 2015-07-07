@@ -79,7 +79,7 @@ bool saveConfig() // сохранение концигурации при выходе
 		fwprintf(file_Fp, L"%i %i \n", CurrentBall.position.X, CurrentBall.position.Y);
 		fwprintf(file_Fp, L"%i %i \n", CurrentBall.course.X, CurrentBall.course.Y);
 		fwprintf(file_Fp, L"%i %i \n", CurrentPlatform.position.X, CurrentPlatform.position.Y);
-		fwprintf(file_Fp, L"%s \n", CurrentGame.CurrentLevelName);
+		fwprintf(file_Fp, L"%s\n", CurrentLevel.name);
 		fwprintf(file_Fp, L"%i \n", CurrentGame.saveStatus);
 		for (int i = 0; i < CurrentLevel.Size_Strings; i++)
 		{
@@ -115,7 +115,7 @@ bool readConfig() // чтение и загрузка конфигурации
 		fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 		fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 		fseek(file_Fp, 2, SEEK_CUR);
-		fwscanf(file_Fp, L"%s", &CurrentGame.CurrentLevelNumber);
+		fwscanf(file_Fp, L"%s", &CurrentGame.CurrentLevelName);
 		fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
 		fseek(file_Fp, 3, SEEK_CUR);
 		if (CurrentGame.saveStatus == 1) {

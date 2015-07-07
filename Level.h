@@ -13,7 +13,6 @@ public:
 	int maxSpeedTime; //максимальная скорость шара на уровне
 	int stepNorm; // количество шагов шара для изменения скорости
 	Level();
-	Level(LPCWSTR LName);
 	~Level();
 	void setStandard() {
 		this->Size_Strings = 10;
@@ -24,7 +23,7 @@ public:
 		this->minSpeedTime = 30;
 		this->maxSpeedTime = 7;
 		this->stepNorm = 5;
-		this->name = L"Auto";
+		this->name = L"Default";
 		this->init = 1;
 	}
 	void setNullLevel();

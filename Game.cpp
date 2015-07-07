@@ -12,7 +12,6 @@ Game::Game() {
 	lnew->setNullLevel();//Задаем ему значение нулевого уровня
 	CurrentGame.Levels.push_back(lnew);
 	lnew = NULL; // стираем уровень переменную.
-	this->CurrentLevelNumber = (this->Levels.size() - 1);
 }
 
 Game::~Game (){
@@ -120,6 +119,7 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 }
 
 bool Game::loadCurrentLevel() { // Создание/загрузка уровней
+	//CurrentGame.CurrentLevelNumber = 0;
 	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
 	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;
@@ -159,12 +159,11 @@ bool Game::loadLevelsFromFile()
 }
 
 
-void Game::End() { // перенести функцию в Level.End
+void Game::End() {
 	int i = MessageBox(hWnd, L"Сохранить игру", 
 		L"Сохранение", MB_YESNO | MB_ICONQUESTION
 		);
-	i = (i == IDYES)? 1 : 0;
-	if (i == 1) {
+	if (i == IDYES) {
 		CurrentGame.saveStatus = 1;
 	} else {
 		CurrentGame.saveStatus = 0;

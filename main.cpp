@@ -17,7 +17,7 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 
 	//initing CurrentLevel!!!!!!!!
 	CurrentGame.loadCurrentLevel();
-
+	readConfig();
 
 	// Определение класса окна
 	wc.hInstance = This;

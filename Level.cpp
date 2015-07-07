@@ -6,6 +6,12 @@ extern HWND hWnd;
 extern Ball CurrentBall;
 extern Platform CurrentPlatform;
 
+Level::Level() 
+{
+	this->setStandard();
+	this->reMap();
+}
+
 Level::~Level() {
     for (int i = 0; i < this->Size_Strings; i++) {
          delete [] Map[i];
@@ -14,30 +20,33 @@ Level::~Level() {
 }
 
 void Level::End(bool status) {
+	EnableWindow(hWnd, FALSE);
 	if (status == true) {
-			if (CurrentGame.CurrentLevelNumber == (CurrentGame.Levels.size() - 1)){
-				MessageBox(hWnd, L"Вы прошли все доступные уровни! Поехали сначала...", 
+		if (CurrentGame.CurrentLevelNumber == (CurrentGame.Levels.size() - 1)){
+			MessageBox(hWnd, L"Вы прошли все доступные уровни! Поехали сначала...", 
 				L"Конец", MB_OK | MB_ICONQUESTION
-				);
-				CurrentGame.CurrentLevelNumber = 0;
-			} else {
-				CurrentGame.CurrentLevelNumber++;			
-			}
-			CurrentGame.loadCurrentLevel();
-			CurrentBall.setStandard();
-			CurrentPlatform.setStandard();
-			CurrentGame.setStandard();
-			CurrentGame.saveStatus = 1;
-			saveConfig();
+			);
+			CurrentGame.CurrentLevelNumber = 0;
+		} else {
+			CurrentGame.CurrentLevelNumber++;			
+		}
+		CurrentGame.loadCurrentLevel();
+		CurrentGame.setStandard();
+		CurrentPlatform.setStandard();
+		CurrentBall.setStandard();
+		CurrentGame.saveStatus = 1;
+		EnableWindow(hWnd, TRUE);
+		saveConfig();
 	} else {
-		int i = MessageBox(hWnd, L"Сохранить игру", 
-		L"Сохранение", MB_YESNO | MB_ICONQUESTION
+		int i = MessageBox(hWnd, L"Начать заново", 
+		L"Проигрыш", MB_YESNO | MB_ICONQUESTION
 		);
 		if (i == IDYES) {
 			CurrentGame.loadCurrentLevel();
+			CurrentGame.setStandard();
 			CurrentPlatform.setStandard();
 			CurrentBall.setStandard();
-			CurrentGame.setStandard();
+			EnableWindow(hWnd, TRUE);
 		} else {
 			CurrentGame.End();
 		}
@@ -74,10 +83,4 @@ void Level::setNullLevel()// устанавливает нулевой уровень
 	CurrentBall.setStandard();
 	CurrentGame.setStandard();
 	CurrentPlatform.setStandard();
-}
-
-Level::Level() 
-{
-	this->setStandard();
-	this->reMap();
 }
