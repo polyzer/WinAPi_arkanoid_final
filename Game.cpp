@@ -140,6 +140,8 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 		}
 		fwscanf(file_Fp, L"%i", &newlevel->Size_Columns);
 		fwscanf(file_Fp, L"%i", &newlevel->Size_Strings);
+		fseek(file_Fp, 3, SEEK_CUR);
+
 		for (int i = 0; i < newlevel->Size_Strings; i++) 
 		{
 			for (int j = 0; j < newlevel->Size_Columns; j++) 

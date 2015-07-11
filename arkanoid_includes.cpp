@@ -42,14 +42,27 @@ void setElementColor(Block block){
 	switch(block.element) 
 	{
 		case L'c':
-			hpen = (HPEN) 	GetStockObject(BLACK_PEN);
 			FillRect(hdc, &block.rect, CurrentGame.BlueBlackBrush);
+		break;
+		case L'C':
+			FillRect(hdc, &block.rect, CurrentGame.BlueLightBrush);
+		break;
+		case L'g':
+			FillRect(hdc, &block.rect, CurrentGame.GreenBlackBrush);
+		break;
+		case L'G':
+			FillRect(hdc, &block.rect, CurrentGame.BlueLightBrush);
+		break;
+		case L'r':
+			FillRect(hdc, &block.rect, CurrentGame.RedBlackBrush);
+		break;
+		case L'R':
+			FillRect(hdc, &block.rect, CurrentGame.RedLightBrush);
 		break;
 		case L' ':
 			hpen = (HPEN) GetStockObject(NULL_PEN);	
 		break;
 		default:
-			hpen = (HPEN) 	GetStockObject(BLACK_PEN);
 			FillRect(hdc, &block.rect, CurrentGame.GreyBlackBrush);
 		break;
 	}
