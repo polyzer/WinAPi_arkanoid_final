@@ -12,9 +12,22 @@ public:
 	wchar_t pauseSymbol; // символ паузы!
 	int saveStatus; // статус сохранения: 0 - новая игра, 1 - загрузка
 	int FPS; //количество кадров
-	std::vector <Level*> Levels; // Указатели на уровни...
+	std::vector <Level*> Levels; // Указатели на уровни
+	HBRUSH RedBlackBrush;
+	HBRUSH RedLightBrush;
+	HBRUSH GreenBlackBrush;
+	HBRUSH GreenLightBrush;
+	HBRUSH BlueBlackBrush;
+	HBRUSH BlueLightBrush;
+	HBRUSH YellowBlackBrush;
+	HBRUSH YellowLightBrush;
+	HBRUSH GreyBlackBrush;
+	HBRUSH GreyLightBrush;
+	HBRUSH White;
+	HBRUSH Black;
+
 	int CurrentLevelNumber;
-	LPCWSTR CurrentLevelName;
+	std::wstring CurrentLevelName;
 	Game();
 	~Game();
 	void setStandard() { // устанавливает начальные значения
@@ -22,17 +35,20 @@ public:
 		minSpeed = 1000;
 		maxSpeed = 50;
 		stopSymbol = 113; //символ оканчивающий игру
-		pauseSymbol = 32;
-		lifes = 3;
-		points = 0;
+		pauseSymbol = 32; // 
+		lifes = 3; //количество жизней
+		points = 0; //начальные очки
 		speed = minSpeed; //стартовая скорость
 		saveStatus = 0; //0 - new, 1 - load
-		this->CurrentLevelNumber = 0;
-		this->CurrentLevelName = L"Default";
+		this->CurrentLevelNumber = 0; //устанавливаем значение текущего номера на 0
+		this->CurrentLevelName = L"Default"; // имя стандартного левела
+
 	}
-	
+	bool CurrentLeveNumberControl(int num);
+	void Menu();
+	void printMenu(int sx, int sy);
 	bool loadLevelsFromFile();
-	bool loadCurrentLevel();
+	bool loadCurrentLevelByNumber();
 	bool createLevel(LPCWSTR LName); //загружает уровень в зависимости от имени
 	void increasePoints(wchar_t c); // увеличивает очки в зависимости от элемента
 	void speedUp(int spd); // изменяет скорость

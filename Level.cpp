@@ -5,6 +5,7 @@ extern Game CurrentGame;
 extern HWND hWnd;
 extern Ball CurrentBall;
 extern Platform CurrentPlatform;
+extern int GamePlayTimer;
 
 Level::Level() 
 {
@@ -20,7 +21,7 @@ Level::~Level() {
 }
 
 void Level::End(bool status) {
-	EnableWindow(hWnd, FALSE);
+	KillTimer(hWnd, GamePlayTimer);
 	if (status == true) {
 		if (CurrentGame.CurrentLevelNumber == (CurrentGame.Levels.size() - 1)){
 			MessageBox(hWnd, L"¬ы прошли все доступные уровни! ѕоехали сначала...", 
@@ -30,23 +31,23 @@ void Level::End(bool status) {
 		} else {
 			CurrentGame.CurrentLevelNumber++;			
 		}
-		CurrentGame.loadCurrentLevel();
+		CurrentGame.loadCurrentLevelByNumber();
 		CurrentGame.setStandard();
 		CurrentPlatform.setStandard();
 		CurrentBall.setStandard();
 		CurrentGame.saveStatus = 1;
-		EnableWindow(hWnd, TRUE);
+		SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 		saveConfig();
 	} else {
 		int i = MessageBox(hWnd, L"Ќачать заново", 
 		L"ѕроигрыш", MB_YESNO | MB_ICONQUESTION
 		);
 		if (i == IDYES) {
-			CurrentGame.loadCurrentLevel();
+			CurrentGame.loadCurrentLevelByNumber();
 			CurrentGame.setStandard();
 			CurrentPlatform.setStandard();
 			CurrentBall.setStandard();
-			EnableWindow(hWnd, TRUE);
+			SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 		} else {
 			CurrentGame.End();
 		}
@@ -63,9 +64,9 @@ void Level::reMap()
 	} else 
 		this->init = false;// убираем значение инициализациии, чтобы очищать пам€ть в след раз
 
-	Map = new wchar_t *[this->Size_Strings];
+	Map = new Block *[this->Size_Strings];
 	for (int i = 0; i < this->Size_Strings; i++)
-		Map[i] = new wchar_t[this->Size_Columns];
+		Map[i] = new Block [this->Size_Columns];
 }
 
 void Level::setNullLevel()// устанавливает нулевой уровень
@@ -73,9 +74,9 @@ void Level::setNullLevel()// устанавливает нулевой уровень
 	for (int i = 0; i < this->Size_Strings; i++) {
 		for (int j = 0; j < this->Size_Columns; j++) {
 			if (i == 0) {
-				this->Map[i][j] = L'c';
+				this->Map[i][j].element = L'c';
 			}else{
-				this->Map[i][j] = this->back;
+				this->Map[i][j].element = this->back;
 			}
 		}
 	}

@@ -25,25 +25,25 @@ bool Platform::blockCollision(int course){
 	//Столкновение с блоками
 	if (course == 1) {//^
 		for(int i = 0; i < this->length; i++) {
-			if (CurrentLevel.Map[this->position.Y - 1][this->position.X + i] != CurrentLevel.back) {
+			if (CurrentLevel.Map[this->position.Y - 1][this->position.X + i].element != CurrentLevel.back) {
 				return false;
 			}
 		}
 	}
 	if (course == 2) {//->
-		if (CurrentLevel.Map[this->position.Y][this->position.X + this->length] != CurrentLevel.back) {
+		if (CurrentLevel.Map[this->position.Y][this->position.X + this->length].element != CurrentLevel.back) {
 			return false;
 		}
 	}
 	if (course == 3) {//\/
 		for(int i = 0; i < this->length; i++) {
-			if (CurrentLevel.Map[this->position.Y + 1][this->position.X + i] != CurrentLevel.back) {
+			if (CurrentLevel.Map[this->position.Y + 1][this->position.X + i].element != CurrentLevel.back) {
 				return false;
 			}
 		}
 	}
 	if (course == 4) {//<-
-		if (CurrentLevel.Map[this->position.Y][this->position.X  - 1] != CurrentLevel.back) {
+		if (CurrentLevel.Map[this->position.Y][this->position.X  - 1].element != CurrentLevel.back) {
 			return false;
 		}
 	}

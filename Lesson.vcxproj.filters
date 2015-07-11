@@ -36,6 +36,9 @@
     <ClCompile Include="arkanoid_includes.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h">
@@ -54,6 +57,9 @@
       <Filter>Файлы исходного кода\Файлы ресурсов</Filter>
     </ClInclude>
     <ClInclude Include="arkanoid_includes.h">
+      <Filter>Файлы исходного кода\Файлы ресурсов</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
       <Filter>Файлы исходного кода\Файлы ресурсов</Filter>
     </ClInclude>
   </ItemGroup>

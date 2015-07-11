@@ -7,15 +7,18 @@
 #endif
 #include <Windows.h>
 #include <cstdio>
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include "Game.h"
 #include "Level.h"
 #include "Ball.h"
 #include "Platform.h"
 #include "Menu.h"
+#include "Block.h"
 
 bool createConfig();
 bool saveConfig();
 bool readConfig();
 std::string ws2mb( LPCWSTR src);
-void setElementColor(wchar_t elem);
+void setElementColor(Block block);

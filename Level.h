@@ -1,14 +1,15 @@
 #pragma once
+#include "Block.h"
 
 class Level {
 public:
 	int Size_Strings;// размер по Y
 	int Size_Columns;//размер по X
 	int number; // номер уровня
-    LPCWSTR name;
+    std::wstring name;
 	bool init;
 	wchar_t back; // background
-	wchar_t **Map; // карта уровня
+	Block **Map; // карта уровня
 	int minSpeedTime; //начальная скорость шара на уровне
 	int maxSpeedTime; //максимальная скорость шара на уровне
 	int stepNorm; // количество шагов шара для изменения скорости

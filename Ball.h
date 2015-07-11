@@ -3,7 +3,7 @@
 struct Ball {
 	COORD position; // позици€ м€ча
 	COORD course; // направление м€ча
-	wchar_t symbol; //цвет символа
+	Block block; //блок
 	int color; //цвет м€ча
 	int speed; // текуща€ скорость
 	int timer; //количество обновлений

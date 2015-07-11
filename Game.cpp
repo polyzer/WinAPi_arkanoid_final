@@ -5,6 +5,8 @@ extern Ball CurrentBall;
 extern HWND hWnd;
 extern Platform CurrentPlatform;
 extern HDC hdc;
+extern bool showMode;
+extern int GamePlayTimer;
 
 Game::Game() {
 	this->setStandard();
@@ -12,6 +14,19 @@ Game::Game() {
 	lnew->setNullLevel();//Задаем ему значение нулевого уровня
 	CurrentGame.Levels.push_back(lnew);
 	lnew = NULL; // стираем уровень переменную.
+	RedBlackBrush = CreateSolidBrush(RGB(128, 0, 0));
+	RedLightBrush = CreateSolidBrush(RGB(255, 0, 0));
+	GreenBlackBrush = CreateSolidBrush(RGB(0, 128, 0));
+	GreenLightBrush = CreateSolidBrush(RGB(0, 255, 0));
+	BlueBlackBrush = CreateSolidBrush(RGB(0, 0, 128));
+	BlueLightBrush = CreateSolidBrush(RGB(0, 0, 255));
+	YellowBlackBrush = CreateSolidBrush(RGB(128, 128, 0));
+	YellowLightBrush = CreateSolidBrush(RGB(255, 255, 0));
+	GreyBlackBrush = CreateSolidBrush(RGB(128, 128, 128));
+	GreyLightBrush = CreateSolidBrush(RGB(255, 255, 255));
+	White = CreateSolidBrush(RGB(255, 255, 0));
+	Black = CreateSolidBrush(RGB(255, 255, 0));
+
 }
 
 Game::~Game (){
@@ -20,6 +35,19 @@ Game::~Game (){
 		delete Levels[i];
 		Levels[i] = NULL;
 	}
+	DeleteObject(RedBlackBrush);
+	DeleteObject(RedLightBrush);
+	DeleteObject(GreenBlackBrush);
+	DeleteObject(GreenLightBrush);
+	DeleteObject(BlueBlackBrush);
+	DeleteObject(BlueLightBrush);
+	DeleteObject(YellowBlackBrush);
+	DeleteObject(YellowLightBrush);
+	DeleteObject(GreyBlackBrush);
+	DeleteObject(GreyLightBrush);
+	DeleteObject(White);
+	DeleteObject(Black);
+
 }
 
 void Game::Play() {
@@ -29,7 +57,7 @@ void Game::Play() {
 		CurrentBall.collision();
 		CurrentBall.collision();
 		if(CurrentBall.collision()){
-		CurrentBall.step(); // если достаточно раз прошел - шаг шара
+			CurrentBall.step(); // если достаточно раз прошел - шаг шара
 		}
 		CurrentBall.timer = 0;
 		CurrentBall.stepNum++;
@@ -51,7 +79,8 @@ void Game::increasePoints(wchar_t c) {
 	//Прибавление очков в зависимости от разрушенного блока!
 }
 void Game::destroyBlock(int y, int x) {
-	CurrentLevel.Map[y][x] = CurrentLevel.back;
+	CurrentLevel.Map[y][x].element = CurrentLevel.back;
+
 }
 
 void Game::render(static int sx, static int sy) { //рисователь
@@ -59,30 +88,30 @@ void Game::render(static int sx, static int sy) { //рисователь
 	cube_size.X = sx / CurrentLevel.Size_Columns;
 	cube_size.Y = sy / CurrentLevel.Size_Strings;
 	MoveToEx(hdc, 0, 0, NULL);
-	setElementColor((wchar_t) 32);
 	for (int i=0; i<CurrentLevel.Size_Strings; i++)
 	{
 		for (int j=0; j<CurrentLevel.Size_Columns; j++)
 		{
 			if (CurrentPlatform.position.X == j && CurrentPlatform.position.Y == i)
 			{
-				for(int k = 0; k < CurrentPlatform.length; k++)
-					setElementColor(CurrentPlatform.symbol);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);
+				for(int k = 0; k < CurrentPlatform.length; k++){
+					SetRect(&CurrentPlatform.block.rect, (j + k) * cube_size.X, i * cube_size.Y, (j + k + 1) * cube_size.X, (i + 1) * cube_size.Y);
+					setElementColor(CurrentPlatform.block);
+				}
 				j += (CurrentPlatform.length - 1); // j
 				continue;
 			}
 			else if (CurrentBall.position.X == j && CurrentBall.position.Y == i) {
-				setElementColor(CurrentBall.symbol);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
+				SetRect(&CurrentBall.block.rect, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
+				setElementColor(CurrentBall.block);
 				continue;
-			}else if (CurrentLevel.Map[i][j] != CurrentLevel.back){
+			}else if (CurrentLevel.Map[i][j].element != CurrentLevel.back){
+				SetRect(&CurrentLevel.Map[i][j].rect, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);								
 				setElementColor(CurrentLevel.Map[i][j]);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);								
 			}
 			else {
-				setElementColor(CurrentLevel.back);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);	
+				SetRect(&CurrentLevel.Map[i][j].rect, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);	
+				setElementColor(CurrentLevel.Map[i][j]);
 			}
 		}
 	}
@@ -92,9 +121,9 @@ void Game::render(static int sx, static int sy) { //рисователь
 bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 	Level *newlevel = new Level(); //выделяем память под новый уровень
 	newlevel->name = LName; //заполняем данные
-	newlevel->number = CurrentGame.Levels.size();
+	newlevel->number = this->Levels.size();
 	FILE *level_file;
-	if ((level_file = _wfopen(newlevel->name, L"r")) == NULL) {
+	if ((level_file = _wfopen(newlevel->name.c_str(), L"r")) == NULL) {
 		MessageBox(hWnd, L"Файл не открывается", 
 		L"Файл не открывается", MB_YESNO | MB_ICONQUESTION
 		);
@@ -108,18 +137,17 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 	);
 	for (int i = 0; i < newlevel->Size_Strings; i++) {
 		for (int j = 0; j < newlevel->Size_Columns; j++) {
-			fwscanf(level_file, L"%c", &newlevel->Map[i][j]);
+			fwscanf(level_file, L"%c", &newlevel->Map[i][j].element);
 		}
 		fseek(level_file, 2, SEEK_CUR);
 	}
 	fclose(level_file);
-	CurrentGame.Levels.push_back(newlevel);
+	this->Levels.push_back(newlevel);
 	newlevel = NULL; //Обнуляем, чтобы данные не потерялись
 	return true;
 }
 
-bool Game::loadCurrentLevel() { // Создание/загрузка уровней
-	//CurrentGame.CurrentLevelNumber = 0;
+bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
 	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
 	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;
@@ -130,7 +158,7 @@ bool Game::loadCurrentLevel() { // Создание/загрузка уровней
 	CurrentLevel.reMap();
 	for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 		for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
-			CurrentLevel.Map[i][j] = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j];
+			CurrentLevel.Map[i][j].element = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j].element;
 		}
 	}
 	return true;
@@ -150,7 +178,7 @@ bool Game::loadLevelsFromFile()
 			nff = FindNextFile(hff, &datas);
 			if (!nff)
 				break;
-			CurrentGame.createLevel(datas.cFileName);
+			this->createLevel(datas.cFileName);
 		}
 	} else 
 		return false;
@@ -164,14 +192,43 @@ void Game::End() {
 		L"Сохранение", MB_YESNO | MB_ICONQUESTION
 		);
 	if (i == IDYES) {
-		CurrentGame.saveStatus = 1;
+		this->saveStatus = 1;
 	} else {
-		CurrentGame.saveStatus = 0;
+		this->saveStatus = 0;
 	}
 	saveConfig();
-	exit(0);
+	//exit(0);
+	showMode = 0;
 }
 
-void Game::printInfo() {
+void Game::Menu() {
+	InvalidateRect(hWnd, NULL, TRUE);
+}
+void Game::printMenu(int sx, int sy) {
+	TEXTMETRICW tm;
+	tm.tmInternalLeading = 0;
+	tm.tmDescent = 0;
+	tm.tmExternalLeading = 0;
+	int curTextPosX = (int)(sx / 5), curTextPosY = (int)(sy / 5);
+	SetBkColor(hdc, RGB(200,200,200));
+	SetTextColor(hdc, RGB(0,0,0));
+	SelectObject(hdc, GetStockObject(ANSI_VAR_FONT));
+	for (int i = 0; i < CurrentGame.Levels.size(); i++) {
+		if(this->CurrentLevelNumber == this->Levels[i]->number)
+			SetTextColor(hdc, RGB(100, 220, 220));
+		else
+			SetTextColor(hdc, RGB(0, 0, 0));
+		curTextPosY += tm.tmInternalLeading + tm.tmExternalLeading + tm.tmDescent;
+		TextOutW(hdc, curTextPosX, curTextPosY, this->Levels[i]->name.c_str(), this->Levels[i]->name.length());
+		GetTextMetricsW(hdc, &tm);	
+	}
 	
 }
+bool Game::CurrentLeveNumberControl(int num){
+	if (num >= 0 && num < CurrentGame.Levels.size())		
+		return true;
+	else
+		return false;
+}
+
+
