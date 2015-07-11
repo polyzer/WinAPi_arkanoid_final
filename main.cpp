@@ -20,10 +20,10 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 {
 
 	//initing CurrentLevel!!!!!!!!
-	CurrentGame.loadCurrentLevelByNumber();
-	//Здесь затирается значение CurrentLevelNumber.Size_Strings, пишем вручную
-	readConfig();
-	CurrentGame.CurrentLevelNumber = CurrentLevel.number;
+	CurrentGame.loadCurrentLevelByNumber(); // Загружаем стандартный уровень в текущий
+	CurrentGame.loadLevelsFromFile(); // Грузим другие уровни из файлов
+	readConfig(); // читаем конфиг и узнаем последние события.
+	CurrentGame.CurrentLevelNumber = CurrentLevel.number; //устанавливаем последний номер из конфига!
 
 	// Определение класса окна
 	wc.hInstance = This;

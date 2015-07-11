@@ -119,29 +119,39 @@ void Game::render(static int sx, static int sy) { //рисователь
 }
 
 bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
+		//Считывание!!!
+		//Структура файла
+		//LevelName
+		//size_X size_Y
+		//********************** elements
+		//**********************
 	Level *newlevel = new Level(); //выделяем память под новый уровень
-	newlevel->name = LName; //заполняем данные
 	newlevel->number = this->Levels.size();
-	FILE *level_file;
-	if ((level_file = _wfopen(newlevel->name.c_str(), L"r")) == NULL) {
-		MessageBox(hWnd, L"Файл не открывается", 
-		L"Файл не открывается", MB_YESNO | MB_ICONQUESTION
-		);
-	}
-	fwscanf(level_file, L"%i%i", &newlevel->Size_Columns, &newlevel->Size_Strings);
-	fseek(level_file, 2, SEEK_CUR);
-	fwscanf(level_file, L"%c", &newlevel->back);
-	fseek(level_file, 2, SEEK_CUR);
-	fwscanf(level_file, L"%i%i%i", 
-		&newlevel->minSpeedTime, &newlevel->maxSpeedTime, &newlevel->stepNorm
-	);
-	for (int i = 0; i < newlevel->Size_Strings; i++) {
-		for (int j = 0; j < newlevel->Size_Columns; j++) {
-			fwscanf(level_file, L"%c", &newlevel->Map[i][j].element);
+	FILE *file_Fp;
+	if ((file_Fp = _wfopen(LName, L"r")) != NULL)
+	{
+		wchar_t sym;
+		newlevel->name.clear();
+		fwscanf(file_Fp, L"%c", &sym);
+		while (sym != L'\n') 
+		{
+			newlevel->name.push_back(sym);
+			fwscanf(file_Fp, L"%c", &sym);
 		}
-		fseek(level_file, 2, SEEK_CUR);
+		fwscanf(file_Fp, L"%i", &newlevel->Size_Columns);
+		fwscanf(file_Fp, L"%i", &newlevel->Size_Strings);
+		for (int i = 0; i < newlevel->Size_Strings; i++) 
+		{
+			for (int j = 0; j < newlevel->Size_Columns; j++) 
+			{
+				fwscanf(file_Fp, L"%c", &(newlevel->Map[i][j].element));
+			}
+			fseek(file_Fp, 2, SEEK_CUR);
+		}
+	} else {
+		exit(0);
 	}
-	fclose(level_file);
+	fclose(file_Fp);
 	this->Levels.push_back(newlevel);
 	newlevel = NULL; //Обнуляем, чтобы данные не потерялись
 	return true;
@@ -168,9 +178,10 @@ bool Game::loadLevelsFromFile()
 {
 	int nff;
 	HANDLE hff;
+	std::wstring str = L"LEVELS\\";
 	WIN32_FIND_DATA datas;
-
 	hff = FindFirstFile(L"LEVELS\\*.*", &datas);
+	nff = FindNextFile(hff, &datas);
 	if (hff != INVALID_HANDLE_VALUE) 
 	{
 		for (;;)
@@ -178,7 +189,8 @@ bool Game::loadLevelsFromFile()
 			nff = FindNextFile(hff, &datas);
 			if (!nff)
 				break;
-			this->createLevel(datas.cFileName);
+			this->createLevel((str.append(datas.cFileName)).c_str());
+			str = L"LEVELS\\";
 		}
 	} else 
 		return false;
@@ -206,23 +218,30 @@ void Game::Menu() {
 }
 void Game::printMenu(int sx, int sy) {
 	TEXTMETRICW tm;
+	HFONT newfont, oldfont;
 	tm.tmInternalLeading = 0;
 	tm.tmDescent = 0;
 	tm.tmExternalLeading = 0;
 	int curTextPosX = (int)(sx / 5), curTextPosY = (int)(sy / 5);
 	SetBkColor(hdc, RGB(200,200,200));
 	SetTextColor(hdc, RGB(0,0,0));
-	SelectObject(hdc, GetStockObject(ANSI_VAR_FONT));
+	newfont = CreateFontW(30, 20, 0, 0, 500, 0, 0, 0, 
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, 
+		DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial");	
+	oldfont = (HFONT) SelectObject(hdc, newfont);
+	GetTextMetricsW(hdc, &tm);	
+	//сдвигаемся вниз для отображения нужного нам номера;
+	curTextPosY = curTextPosY - CurrentGame.CurrentLevelNumber * ( tm.tmHeight + tm.tmExternalLeading);
 	for (int i = 0; i < CurrentGame.Levels.size(); i++) {
 		if(this->CurrentLevelNumber == this->Levels[i]->number)
 			SetTextColor(hdc, RGB(100, 220, 220));
 		else
 			SetTextColor(hdc, RGB(0, 0, 0));
-		curTextPosY += tm.tmInternalLeading + tm.tmExternalLeading + tm.tmDescent;
 		TextOutW(hdc, curTextPosX, curTextPosY, this->Levels[i]->name.c_str(), this->Levels[i]->name.length());
-		GetTextMetricsW(hdc, &tm);	
+		curTextPosY += tm.tmExternalLeading + tm.tmHeight;
 	}
-	
+	SelectObject(hdc, oldfont);
+	DeleteObject(newfont);	
 }
 bool Game::CurrentLeveNumberControl(int num){
 	if (num >= 0 && num < CurrentGame.Levels.size())		
