@@ -31,13 +31,13 @@ void Level::End(bool status) {
 		} else {
 			CurrentGame.CurrentLevelNumber++;			
 		}
-		CurrentGame.loadCurrentLevelByNumber();
 		CurrentGame.setStandard();
 		CurrentPlatform.setStandard();
 		CurrentBall.setStandard();
+		CurrentGame.loadCurrentLevelByNumber();
 		CurrentGame.saveStatus = 1;
-		SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 		saveConfig();
+		SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 	} else {
 		int i = MessageBox(hWnd, L"Начать заново", 
 		L"Проигрыш", MB_YESNO | MB_ICONQUESTION

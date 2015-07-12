@@ -10,6 +10,8 @@ extern int GamePlayTimer;
 
 Game::Game() {
 	this->setStandard();
+	this->CurrentLevelNumber = 0; //устанавливаем значение текущего номера на 0
+	this->CurrentLevelName = L"Default"; // имя стандартного левела
 	Level *lnew = new Level();// Создаем уровень
 	lnew->setNullLevel();//Задаем ему значение нулевого уровня
 	CurrentGame.Levels.push_back(lnew);
@@ -160,6 +162,7 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 }
 
 bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
+	int k = 0;
 	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
 	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;
@@ -171,6 +174,19 @@ bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
 	for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 		for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
 			CurrentLevel.Map[i][j].element = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j].element;
+			if (CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j].element == L'P')	//Если встречается символ P, то		
+			{	
+				CurrentPlatform.position.X = j; //устанавливаем положение платформы
+				CurrentPlatform.position.Y = i;
+				for (k = j; k < CurrentLevel.Size_Columns; k++) {
+					if(CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][k].element == L'P') {
+						CurrentPlatform.length = (k - j + 1); // и Устанавливаем длину платформы
+						CurrentLevel.Map[i][k].element = L' ';
+					} else 
+						break;
+				}
+				j = k;
+			}
 		}
 	}
 	return true;
@@ -210,8 +226,11 @@ void Game::End() {
 	} else {
 		this->saveStatus = 0;
 	}
+
 	saveConfig();
-	//exit(0);
+	CurrentGame.setStandard();
+	CurrentPlatform.setStandard();
+	CurrentBall.setStandard();
 	showMode = 0;
 }
 

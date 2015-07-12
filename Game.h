@@ -40,9 +40,6 @@ public:
 		points = 0; //начальные очки
 		speed = minSpeed; //стартовая скорость
 		saveStatus = 0; //0 - new, 1 - load
-		this->CurrentLevelNumber = 0; //устанавливаем значение текущего номера на 0
-		this->CurrentLevelName = L"Default"; // имя стандартного левела
-
 	}
 	bool CurrentLeveNumberControl(int num);
 	void Menu();
