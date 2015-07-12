@@ -219,10 +219,10 @@ void Ball::step(){
 void Ball::setStandard() {//установка начального положени€ м€ча
 		this->course.X = 1; // 1 - вправо, -1 - влево
 		this->course.Y = -1;// 1 - вниз, -1 - вверх
-		this->position.X = (CurrentLevel.Size_Columns/2);
-		this->position.Y = (CurrentLevel.Size_Strings/2);
-		this->block.element = 4;
-		this->speed = CurrentLevel.minSpeedTime;
+		this->position.X = (int) (CurrentLevel.Size_Columns/2);
+		this->position.Y = (int) (CurrentLevel.Size_Strings/2);
+		this->block.element = L'B';
+		this->speed = 30;
 		this->timer = 0;
 		this->stepNum = 0;
 	}
@@ -241,4 +241,17 @@ bool Level::allBlocksDestroyed() {
 		}
 	}
 	return true;
+}
+
+void Ball::genCourse(){
+	srand(clock());
+	
+	if((rand()%1) == 1)
+		this->course.X = 1;
+	else
+		this->course.X = -1;
+	if((rand()%1) == 1)
+		this->course.Y = 1;
+	else
+		this->course.Y = -1;
 }

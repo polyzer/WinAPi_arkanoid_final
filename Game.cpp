@@ -124,6 +124,8 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 		//Считывание!!!
 		//Структура файла
 		//LevelName
+		//GameLifes
+		//minSpeed 30 .. 6
 		//size_X size_Y
 		//********************** elements
 		//**********************
@@ -140,6 +142,8 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 			newlevel->name.push_back(sym);
 			fwscanf(file_Fp, L"%c", &sym);
 		}
+		fwscanf(file_Fp, L"%i", &newlevel->gameLifes);
+		fwscanf(file_Fp, L"%i", &newlevel->minSpeedTime);
 		fwscanf(file_Fp, L"%i", &newlevel->Size_Columns);
 		fwscanf(file_Fp, L"%i", &newlevel->Size_Strings);
 		fseek(file_Fp, 3, SEEK_CUR);
@@ -162,19 +166,24 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 }
 
 bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
+	CurrentLevel.name = this->Levels[this->CurrentLevelNumber]->name;
+	this->CurrentLevelName = CurrentLevel.name;
+	CurrentBall.genCourse(); // генерируем курс шара
 	int k = 0;
-	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
-	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;
-	CurrentLevel.maxSpeedTime = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->maxSpeedTime;
-	CurrentLevel.minSpeedTime = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->minSpeedTime;
-	CurrentLevel.Size_Columns = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Columns;
-	CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
+	CurrentLevel.back = CurrentGame.Levels[this->CurrentLevelNumber]->back;
+	CurrentLevel.maxSpeedTime = CurrentGame.Levels[this->CurrentLevelNumber]->maxSpeedTime;
+	CurrentLevel.minSpeedTime = CurrentGame.Levels[this->CurrentLevelNumber]->minSpeedTime;
+	CurrentBall.speed = CurrentLevel.minSpeedTime;
+	CurrentLevel.gameLifes = CurrentGame.Levels[this->CurrentLevelNumber]->gameLifes;
+	CurrentGame.lifes = CurrentLevel.gameLifes;
+	CurrentLevel.Size_Columns = CurrentGame.Levels[this->CurrentLevelNumber]->Size_Columns;
+	CurrentLevel.Size_Strings = CurrentGame.Levels[this->CurrentLevelNumber]->Size_Strings;
 	CurrentLevel.reMap();
 	for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 		for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
-			CurrentLevel.Map[i][j].element = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j].element;
-			if (CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j].element == L'P')	//Если встречается символ P, то		
+			CurrentLevel.Map[i][j].element = this->Levels[this->CurrentLevelNumber]->Map[i][j].element;
+			if (CurrentGame.Levels[this->CurrentLevelNumber]->Map[i][j].element == L'P')	//Если встречается символ P, то		
 			{	
 				CurrentPlatform.position.X = j; //устанавливаем положение платформы
 				CurrentPlatform.position.Y = i;
@@ -187,7 +196,19 @@ bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
 				}
 				j = k;
 			}
+			if (this->Levels[this->CurrentLevelNumber]->Map[i][j].element == L'B')	//Если встречается символ P, то		
+			{	
+				CurrentBall.position.X = j; //устанавливаем положение платформы
+				CurrentBall.position.Y = i;
+				CurrentLevel.Map[i][j].element = L' ';
+				j++;
+			}
+
+
 		}
+	}
+	if (!this->CurrentLevelName.compare(this->lastLevelName)){
+		readConfig();
 	}
 	return true;
 }
@@ -230,7 +251,9 @@ void Game::End() {
 	saveConfig();
 	CurrentGame.setStandard();
 	CurrentPlatform.setStandard();
+	CurrentPlatform.setStandardPosition();
 	CurrentBall.setStandard();
+	readConfig();
 	showMode = 0;
 }
 

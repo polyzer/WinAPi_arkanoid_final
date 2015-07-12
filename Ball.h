@@ -15,12 +15,13 @@ struct Ball {
 
 	void setStandard();
 
-	void setPosition(COORD pos) {
-		this->position.X = pos.X;
-		this->position.Y = pos.Y;
+	void setPosition(int x, int y) {
+		this->position.X = x;
+		this->position.Y = y;
 	}
 	void step(); // шаг мяча
-	void setCourse(int side); //1 - вправо, 0 - влево
+	void setCourse(int hor_course, int ver_course); //1 - вправо, 0 - влево
+	void genCourse();
 	bool collision(); //столкновения и выход за границы окна
 	bool screenOut();
 	bool platformCollision();

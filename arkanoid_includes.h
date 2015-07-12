@@ -7,6 +7,7 @@
 #endif
 #include <Windows.h>
 #include <cstdio>
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <vector>

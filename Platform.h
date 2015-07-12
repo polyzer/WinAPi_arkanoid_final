@@ -19,9 +19,9 @@ struct Platform {
 		this->color = 10; //
 	}
 
-	void setPosition(COORD pos) {
-		this->position.X = pos.X;
-		this->position.Y = pos.Y;
+	void setStandardPosition() {
+		this->position.X = 0; // позиция о X
+		this->position.Y = (CurrentLevel.Size_Strings - 1); // позиция по Y
 	}
 	bool moveControl(int control);//Глобальная функция проверки перемещения
 	bool outOfSize(int control);//Проверка выхода за границы экрана

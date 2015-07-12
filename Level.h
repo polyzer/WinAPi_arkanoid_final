@@ -3,6 +3,7 @@
 
 class Level {
 public:
+	int gameLifes; //установит количество жизней
 	int Size_Strings;// размер по Y
 	int Size_Columns;//размер по X
 	int number; // номер уровня
@@ -22,10 +23,11 @@ public:
 		//system("pause");
 		this->back = L' ';
 		this->minSpeedTime = 30;
-		this->maxSpeedTime = 7;
+		this->maxSpeedTime = 5;
 		this->stepNorm = 5;
 		this->name = L"Default";
 		this->init = 1;
+		this->gameLifes = 1;
 	}
 	void setNullLevel();
 	void reMap(); // задаем количество строк и количество столбцов.

@@ -28,6 +28,7 @@ public:
 
 	int CurrentLevelNumber;
 	std::wstring CurrentLevelName;
+	std::wstring lastLevelName;
 	Game();
 	~Game();
 	void setStandard() { // устанавливает начальные значения
