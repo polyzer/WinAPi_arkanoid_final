@@ -219,8 +219,7 @@ void Ball::step(){
 void Ball::setStandard() {//установка начального положения мяча
 		this->course.X = 1; // 1 - вправо, -1 - влево
 		this->course.Y = -1;// 1 - вниз, -1 - вверх
-		this->position.X = (int) (CurrentLevel.Size_Columns/2);
-		this->position.Y = (int) (CurrentLevel.Size_Strings/2);
+		this->setStandardPosition();
 		this->block.element = L'B';
 		this->speed = 30;
 		this->timer = 0;
@@ -228,6 +227,10 @@ void Ball::setStandard() {//установка начального положения мяча
 	}
 ////////////
 
+void Ball::setStandardPosition() {
+		this->position.X = (int) (CurrentLevel.Size_Columns/2);
+		this->position.Y = (int) (CurrentLevel.Size_Strings/2);
+}
 void Ball::speedUp(int spd) {
 	if (this->speed >= CurrentLevel.maxSpeedTime)
 		this->speed -= spd;

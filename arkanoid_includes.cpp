@@ -126,13 +126,12 @@ bool saveConfig() // сохранение концигурации при выходе
 }
 
 bool readConfig() // чтение и загрузка конфигурации
-{
-	
+{	
 	FILE *file_Fp;
 	if ((file_Fp = _wfopen(config_file_name_ca, L"r")) != NULL)
 	{
 		wchar_t sym;
-		//Считывание!!!
+		//Считывание имени!!!
 		CurrentGame.lastLevelName.clear();
 		fwscanf(file_Fp, L"%c", &sym);
 		while (sym != L'\n') {
@@ -153,7 +152,6 @@ bool readConfig() // чтение и загрузка конфигурации
 		fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 		fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 		fseek(file_Fp, 3, SEEK_CUR);
-		// Костыль!!!!!
 		CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 		if (CurrentGame.saveStatus == 1) {
 			for (int i = 0; i < CurrentLevel.Size_Strings; i++) {

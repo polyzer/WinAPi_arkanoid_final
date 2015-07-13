@@ -12,13 +12,12 @@ struct Ball {
 	Ball() {
 		this->setStandard();
 	}
-
 	void setStandard();
-
 	void setPosition(int x, int y) {
 		this->position.X = x;
 		this->position.Y = y;
 	}
+	void setStandardPosition();
 	void step(); // шаг м€ча
 	void setCourse(int hor_course, int ver_course); //1 - вправо, 0 - влево
 	void genCourse();

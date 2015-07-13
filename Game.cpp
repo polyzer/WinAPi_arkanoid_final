@@ -169,6 +169,7 @@ bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
 	CurrentLevel.name = this->Levels[this->CurrentLevelNumber]->name;
 	this->CurrentLevelName = CurrentLevel.name;
 	CurrentBall.genCourse(); // генерируем курс шара
+	int b = 0, p = 0;
 	int k = 0;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
 	CurrentLevel.back = CurrentGame.Levels[this->CurrentLevelNumber]->back;
@@ -195,6 +196,7 @@ bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
 						break;
 				}
 				j = k;
+				p++;
 			}
 			if (this->Levels[this->CurrentLevelNumber]->Map[i][j].element == L'B')	//Если встречается символ P, то		
 			{	
@@ -202,10 +204,13 @@ bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
 				CurrentBall.position.Y = i;
 				CurrentLevel.Map[i][j].element = L' ';
 				j++;
+				b++;
 			}
-
-
 		}
+	}
+	if (!b && !p) {
+		CurrentBall.setStandardPosition();
+		CurrentPlatform.setStandardPosition();
 	}
 	if (!this->CurrentLevelName.compare(this->lastLevelName)){
 		readConfig();
